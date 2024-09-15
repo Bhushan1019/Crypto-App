@@ -145,14 +145,14 @@ const Item = ({
   });
 
   return (
-    <GestureHandlerRootView style={{ flex: 0 }}>
-      <GestureDetector gesture={panGesture}>
-        {/* Wrap children in a common parent view */}
-        <Animated.View style={style}>
-          <View style={StyleSheet.absoluteFill}>{children}</View>
-        </Animated.View>
-      </GestureDetector>
-    </GestureHandlerRootView>
+    // <GestureHandlerRootView style={{ flex: 0 }}>
+    <GestureDetector gesture={panGesture}>
+      {/* Wrap children in a common parent view */}
+      <Animated.View style={style}>
+        <View style={StyleSheet.absoluteFill}>{children}</View>
+      </Animated.View>
+    </GestureDetector>
+    // </GestureHandlerRootView>
   );
 };
 
