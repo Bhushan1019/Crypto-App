@@ -1,7 +1,6 @@
-import React, { ReactNode, RefObject } from "react";
-import { Dimensions, StyleSheet } from "react-native";
+import React, { ReactNode } from "react";
+import { Dimensions, StyleSheet, View } from "react-native";
 import Animated, {
-  useAnimatedGestureHandler,
   useAnimatedStyle,
   useAnimatedReaction,
   withSpring,
@@ -13,8 +12,9 @@ import Animated, {
   AnimatedRef,
 } from "react-native-reanimated";
 import {
-  PanGestureHandler,
-  PanGestureHandlerGestureEvent,
+  GestureHandlerRootView,
+  GestureDetector,
+  Gesture,
 } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -67,39 +67,30 @@ const Item = ({
     }
   );
 
-  const onGestureEvent = useAnimatedGestureHandler<
-    PanGestureHandlerGestureEvent,
-    { x: number; y: number }
-  >({
-    onStart: (_, ctx) => {
-      // dont allow drag start if we're done editing
+  // Define the pan gesture using the new Gesture API
+  const panGesture = Gesture.Pan()
+    .onBegin(() => {
       if (editing) {
-        ctx.x = translateX.value;
-        ctx.y = translateY.value;
         isGestureActive.value = true;
       }
-    },
-    onActive: ({ translationX, translationY }, ctx) => {
-      // dont allow drag if we're done editing
+    })
+    .onUpdate((event) => {
       if (editing) {
-        translateX.value = ctx.x + translationX;
-        translateY.value = ctx.y + translationY;
-        // 1. We calculate where the tile should be
+        translateX.value = event.translationX + position.x;
+        translateY.value = event.translationY + position.y;
+
         const newOrder = getOrder(
           translateX.value,
           translateY.value,
           Object.keys(positions.value).length - 1
         );
 
-        // 2. We swap the positions
         const oldOlder = positions.value[id];
         if (newOrder !== oldOlder) {
           const idToSwap = Object.keys(positions.value).find(
             (key) => positions.value[key] === newOrder
           );
           if (idToSwap) {
-            // Spread operator is not supported in worklets
-            // And Object.assign doesn't seem to be working on alpha.6
             const newPositions = JSON.parse(JSON.stringify(positions.value));
             newPositions[id] = newOrder;
             newPositions[idToSwap] = oldOlder;
@@ -107,7 +98,6 @@ const Item = ({
           }
         }
 
-        // 3. Scroll up and down if necessary
         const lowerBound = scrollY.value;
         const upperBound = lowerBound + containerHeight - SIZE;
         const maxScroll = contentHeight - containerHeight;
@@ -116,8 +106,6 @@ const Item = ({
           const diff = Math.min(lowerBound - translateY.value, lowerBound);
           scrollY.value -= diff;
           scrollTo(scrollView, 0, scrollY.value, false);
-          ctx.y -= diff;
-          translateY.value = ctx.y + translationY;
         }
         if (translateY.value > upperBound) {
           const diff = Math.min(
@@ -126,20 +114,18 @@ const Item = ({
           );
           scrollY.value += diff;
           scrollTo(scrollView, 0, scrollY.value, false);
-          ctx.y += diff;
-          translateY.value = ctx.y + translationY;
         }
       }
-    },
-    onEnd: () => {
+    })
+    .onEnd(() => {
       const newPosition = getPosition(positions.value[id]!);
       translateX.value = withTiming(newPosition.x, animationConfig, () => {
         isGestureActive.value = false;
         runOnJS(onDragEnd)(positions.value);
       });
       translateY.value = withTiming(newPosition.y, animationConfig);
-    },
-  });
+    });
+
   const style = useAnimatedStyle(() => {
     const zIndex = isGestureActive.value ? 100 : 0;
     const scale = withSpring(isGestureActive.value ? 1.05 : 1);
@@ -157,14 +143,16 @@ const Item = ({
       ],
     };
   });
+
   return (
-    <Animated.View style={style}>
-      <PanGestureHandler enabled={editing} onGestureEvent={onGestureEvent}>
-        <Animated.View style={StyleSheet.absoluteFill}>
-          {children}
+    <GestureHandlerRootView style={{ flex: 0 }}>
+      <GestureDetector gesture={panGesture}>
+        {/* Wrap children in a common parent view */}
+        <Animated.View style={style}>
+          <View style={StyleSheet.absoluteFill}>{children}</View>
         </Animated.View>
-      </PanGestureHandler>
-    </Animated.View>
+      </GestureDetector>
+    </GestureHandlerRootView>
   );
 };
 
