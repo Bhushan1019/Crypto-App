@@ -31,7 +31,7 @@
       [
         "expo-router",
         {
-          "origin": ""
+          "origin": "https://google.com"
         }
       ],
       "expo-asset",
