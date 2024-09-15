@@ -1,9 +1,12 @@
 import { View, Text, ScrollView, StyleSheet, Button } from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
+import RoundBtn from "@/components/RoundBtn";
 
 const Page = () => {
   const balance = 0;
+
+  const onAddMoney = () => {};
   return (
     <ScrollView style={{ backgroundColor: Colors.background }}>
       <View style={styles.account}>
@@ -14,10 +17,10 @@ const Page = () => {
       </View>
 
       <View style={styles.actionRow}>
-        <Button title="Send" />
-        <Button title="Request" />
-        <Button title="Request" />
-        <Button title="Request" />
+        <RoundBtn icon={"add"} text={"Add Money"} onPress={onAddMoney} />
+        <RoundBtn icon={"refresh"} text={"Exchange"} />
+        <RoundBtn icon={"list"} text={"Details"} />
+        <RoundBtn icon={"add"} text={"Add Money"} onPress={onAddMoney} />
       </View>
     </ScrollView>
   );
