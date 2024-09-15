@@ -3,16 +3,25 @@ import React from "react";
 import Colors from "@/constants/Colors";
 import RoundBtn from "@/components/RoundBtn";
 import Dropdown from "@/components/Dropdown";
+import { useBalanceStore } from "@/store/balanceStore";
 
 const Page = () => {
-  const balance = 0;
+  const { balance, runTransaction, transactions, clearTransactions } =
+    useBalanceStore();
 
-  const onAddMoney = () => {};
+  const onAddMoney = () => {
+    runTransaction({
+      id: Math.random().toString(),
+      amount: 100,
+      date: new Date(),
+      title: "Added Money",
+    });
+  };
   return (
     <ScrollView style={{ backgroundColor: Colors.background }}>
       <View style={styles.account}>
         <View style={styles.row}>
-          <Text style={styles.balance}>{balance}</Text>
+          <Text style={styles.balance}>{balance()}</Text>
           <Text style={styles.currency}>₹</Text>
         </View>
       </View>
