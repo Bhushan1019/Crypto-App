@@ -114,13 +114,14 @@ const InitialLayout = () => {
 };
 
 const RootLayoutNav = () => {
-  return;
-  <ClerkProvider
-    publishableKey={CLERK_PUBLISHABLE_KEY!}
-    tokenCache={tokenCache}
-  >
-    <InitialLayout />
-  </ClerkProvider>;
+  return (
+    <ClerkProvider
+      publishableKey={CLERK_PUBLISHABLE_KEY!}
+      tokenCache={tokenCache}
+    >
+      <InitialLayout />
+    </ClerkProvider>
+  );
 };
 
 export default RootLayoutNav;
