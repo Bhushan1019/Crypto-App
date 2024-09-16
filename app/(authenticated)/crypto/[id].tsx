@@ -14,6 +14,8 @@ import { useQuery } from "@tanstack/react-query";
 import Colors from "@/constants/Colors";
 import { defaultStyles } from "@/constants/Styles";
 import { Ionicons } from "@expo/vector-icons";
+import { CartesianChart, Line } from "victory-native";
+import { useFont } from "@shopify/react-native-skia";
 
 const categories = ["Overview", "News", "Orders", "Transactions"];
 
@@ -21,14 +23,19 @@ const Page = () => {
   const { id } = useLocalSearchParams();
   const headerHeight = useHeaderHeight();
   const [activeIndex, setActiveIndex] = useState(0);
+  const font = useFont(require("@/assets/fonts/SpaceMono-Regular.ttf"), 12);
 
   const { data } = useQuery({
     queryKey: ["info", id],
     queryFn: async () => {
       const info = await fetch(`/api/info?ids=${id}`).then((res) => res.json());
-      //   const logo = info[+id].logo;
       return info[+id];
     },
+  });
+  const { data: tickers } = useQuery({
+    queryKey: ["tickers"],
+    queryFn: async (): Promise<any[]> =>
+      fetch(`/api/tickers`).then((res) => res.json()),
   });
   return (
     <>
@@ -132,6 +139,79 @@ const Page = () => {
         )}
         renderItem={({ item }) => (
           <>
+            <View style={[defaultStyles.block, { height: 500 }]}>
+              {tickers && (
+                <>
+                  {!isActive && (
+                    <View>
+                      <Text
+                        style={{
+                          fontSize: 30,
+                          fontWeight: "bold",
+                          color: Colors.dark,
+                        }}
+                      >
+                        {tickers[tickers.length - 1].price.toFixed(2)} €
+                      </Text>
+                      <Text style={{ fontSize: 18, color: Colors.gray }}>
+                        Today
+                      </Text>
+                    </View>
+                  )}
+                  {isActive && (
+                    <View>
+                      <AnimatedTextInput
+                        editable={false}
+                        underlineColorAndroid={"transparent"}
+                        style={{
+                          fontSize: 30,
+                          fontWeight: "bold",
+                          color: Colors.dark,
+                        }}
+                        animatedProps={animatedText}
+                      ></AnimatedTextInput>
+                      <AnimatedTextInput
+                        editable={false}
+                        underlineColorAndroid={"transparent"}
+                        style={{ fontSize: 18, color: Colors.gray }}
+                        animatedProps={animatedDateText}
+                      ></AnimatedTextInput>
+                    </View>
+                  )}
+                  <CartesianChart
+                    chartPressState={state}
+                    axisOptions={{
+                      font,
+                      tickCount: 5,
+                      labelOffset: { x: -2, y: 0 },
+                      labelColor: Colors.gray,
+                      formatYLabel: (v) => `${v} €`,
+                      formatXLabel: (ms) => format(new Date(ms), "MM/yy"),
+                    }}
+                    data={tickers!}
+                    xKey="timestamp"
+                    yKeys={["price"]}
+                  >
+                    {({ points }) => (
+                      <>
+                        <Line
+                          points={points.price}
+                          color={Colors.primary}
+                          strokeWidth={3}
+                        />
+                        {isActive && (
+                          <ToolTip
+                            x={state.x.position}
+                            y={state.y.price.position}
+                          />
+                        )}
+                      </>
+                    )}
+                  </CartesianChart>
+                </>
+              )}
+            </View>
+
             <View style={[defaultStyles.block, { marginTop: 20 }]}>
               <Text style={styles.subtitle}>Overview</Text>
               <Text style={{ color: Colors.gray }}>{data?.description}</Text>
