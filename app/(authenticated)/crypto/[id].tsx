@@ -6,16 +6,30 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  TextInput,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useQuery } from "@tanstack/react-query";
 import Colors from "@/constants/Colors";
 import { defaultStyles } from "@/constants/Styles";
 import { Ionicons } from "@expo/vector-icons";
-import { CartesianChart, Line } from "victory-native";
-import { useFont } from "@shopify/react-native-skia";
+import { CartesianChart, Line, useChartPressState } from "victory-native";
+import { Circle, useFont } from "@shopify/react-native-skia";
+import { format } from "date-fns";
+import * as Haptics from "expo-haptics";
+import Animated, {
+  SharedValue,
+  useAnimatedProps,
+} from "react-native-reanimated";
+
+Animated.addWhitelistedNativeProps({ text: true });
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+
+function ToolTip({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) {
+  return <Circle cx={x} cy={y} r={8} color={Colors.primary} />;
+}
 
 const categories = ["Overview", "News", "Orders", "Transactions"];
 
@@ -24,6 +38,12 @@ const Page = () => {
   const headerHeight = useHeaderHeight();
   const [activeIndex, setActiveIndex] = useState(0);
   const font = useFont(require("@/assets/fonts/SpaceMono-Regular.ttf"), 12);
+  const { state, isActive } = useChartPressState({ x: 0, y: { price: 0 } });
+
+  useEffect(() => {
+    console.log(isActive);
+    if (isActive) Haptics.selectionAsync();
+  }, [isActive]);
 
   const { data } = useQuery({
     queryKey: ["info", id],
@@ -37,6 +57,22 @@ const Page = () => {
     queryFn: async (): Promise<any[]> =>
       fetch(`/api/tickers`).then((res) => res.json()),
   });
+
+  const animatedText = useAnimatedProps(() => {
+    return {
+      text: `${state.y.price.value.value.toFixed(2)} €`,
+      defaultValue: "",
+    };
+  });
+
+  const animatedDateText = useAnimatedProps(() => {
+    const date = new Date(state.x.value.value);
+    return {
+      text: `${date.toLocaleDateString()}`,
+      defaultValue: "",
+    };
+  });
+
   return (
     <>
       <Stack.Screen options={{ title: data?.name }} />
