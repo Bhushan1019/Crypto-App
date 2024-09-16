@@ -164,6 +164,20 @@ const InitialLayout = () => {
         name="(authenticated)/(models)/lock"
         options={{ headerShown: false, animation: "none" }}
       />
+      <Stack.Screen
+        name="(authenticated)/(models)/account"
+        options={{
+          presentation: "transparentModal",
+          animation: "fade",
+          title: "",
+          headerTransparent: true,
+          headerLeft: () => (
+            <TouchableOpacity onPress={router.back}>
+              <Ionicons name="close-outline" size={34} color={"#fff"} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </Stack>
   );
 };

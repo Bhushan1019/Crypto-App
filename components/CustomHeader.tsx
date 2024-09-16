@@ -10,6 +10,7 @@ import { BlurView } from "expo-blur";
 import Colors from "@/constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { Link } from "expo-router";
 
 const CustomHeader = () => {
   const { top } = useSafeAreaInsets();
@@ -26,20 +27,23 @@ const CustomHeader = () => {
           },
         ]}
       >
-        <TouchableOpacity
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-            backgroundColor: Colors.gray,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16 }}>
-            SG
-          </Text>
-        </TouchableOpacity>
+        <Link href={"/(authenticated)/(models)/account"} asChild>
+          <TouchableOpacity
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              backgroundColor: Colors.gray,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16 }}>
+              SG
+            </Text>
+          </TouchableOpacity>
+        </Link>
+
         <View style={styles.searchSection}>
           <Ionicons
             style={styles.searchIcon}
