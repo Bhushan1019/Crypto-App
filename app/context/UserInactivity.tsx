@@ -38,7 +38,7 @@ export const UserInactivityProvider = ({ children }: any) => {
       console.log("🚀 ~ handleAppStateChange ~ elapsed:", elapsed);
 
       if (elapsed > 3000 && isSignedIn) {
-        router.replace("/(authenticated)/(modals)/lock");
+        router.replace("/(authenticated)/(models)/lock");
       }
     }
     appState.current = nextAppState;
