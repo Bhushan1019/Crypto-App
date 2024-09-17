@@ -11,7 +11,7 @@ const Dropdown = () => {
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content>
-        <DropdownMenu.Item key="Statemnet">
+        <DropdownMenu.Item key="Statement">
           <DropdownMenu.ItemTitle>Statement</DropdownMenu.ItemTitle>
         </DropdownMenu.Item>
         <DropdownMenu.Item key="converter">

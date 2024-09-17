@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "crypto-app",
-    "slug": "crypto-app",
+    "name": "crypto",
+    "slug": "crypto",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

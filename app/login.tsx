@@ -99,7 +99,7 @@ const Page = () => {
           ]}
           onPress={() => onSignin(SignInType.Phone)}
         >
-          <Text style={defaultStyles.buttonText}>Sign In</Text>
+          <Text style={defaultStyles.buttonText}>Continue</Text>
         </TouchableOpacity>
         <View
           style={{
