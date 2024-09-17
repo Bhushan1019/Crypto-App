@@ -12,6 +12,7 @@ import { BlurView } from "expo-blur";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+// import { getAppIcon, setAppIcon } from "expo-dynamic-app-icon";
 
 // const ICONS = [
 //   {
