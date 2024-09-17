@@ -13,7 +13,8 @@ import * as SecureStore from "expo-secure-store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { UserInactivityProvider } from "./context/UserInactivity";
+import { UserInactivityProvider } from "@/context/UserInactivity";
+// import { UserInactivityProvider } from "./context/UserInactivity";
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 const queryClient = new QueryClient();

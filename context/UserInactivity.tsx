@@ -2,8 +2,6 @@ import { useAuth } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import { AppState, AppStateStatus } from "react-native";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { MMKV } from "react-native-mmkv";
 
 const storage = new MMKV({
@@ -12,7 +10,6 @@ const storage = new MMKV({
 
 export const UserInactivityProvider = ({ children }: any) => {
   const appState = useRef(AppState.currentState);
-
   const router = useRouter();
   const { isSignedIn } = useAuth();
 
@@ -28,6 +25,8 @@ export const UserInactivityProvider = ({ children }: any) => {
   }, []);
 
   const handleAppStateChange = async (nextAppState: AppStateStatus) => {
+    console.log("🚀 ~ handleAppStateChange ~ nextAppState", nextAppState);
+
     if (nextAppState === "background") {
       recordStartTime();
     } else if (
@@ -37,7 +36,7 @@ export const UserInactivityProvider = ({ children }: any) => {
       const elapsed = Date.now() - (storage.getNumber("startTime") || 0);
       console.log("🚀 ~ handleAppStateChange ~ elapsed:", elapsed);
 
-      if (elapsed > 3000 && isSignedIn) {
+      if (elapsed > 5000 && isSignedIn) {
         router.replace("/(authenticated)/(models)/lock");
       }
     }

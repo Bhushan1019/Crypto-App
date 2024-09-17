@@ -1,7 +1,7 @@
 import Colors from "@/constants/Colors";
 import { useUser } from "@clerk/clerk-expo";
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -68,6 +68,11 @@ const Page = () => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
   };
+  const onForgotPasscodePress = () => {
+    Alert.alert("Forgot Passcode?", "Password is 111111", [
+      { text: "OK", onPress: () => console.log("OK Pressed") },
+    ]);
+  };
 
   return (
     <SafeAreaView>
@@ -96,7 +101,9 @@ const Page = () => {
               key={number}
               onPress={() => onNumberPress(number)}
             >
-              <Text style={styles.number}>{number}</Text>
+              <View style={{ padding: 20 }}>
+                <Text style={styles.number}>{number}</Text>
+              </View>
             </TouchableOpacity>
           ))}
         </View>
@@ -107,7 +114,9 @@ const Page = () => {
               key={number}
               onPress={() => onNumberPress(number)}
             >
-              <Text style={styles.number}>{number}</Text>
+              <View style={{ padding: 20 }}>
+                <Text style={styles.number}>{number}</Text>
+              </View>
             </TouchableOpacity>
           ))}
         </View>
@@ -117,7 +126,9 @@ const Page = () => {
               key={number}
               onPress={() => onNumberPress(number)}
             >
-              <Text style={styles.number}>{number}</Text>
+              <View style={{ padding: 20 }}>
+                <Text style={styles.number}>{number}</Text>
+              </View>
             </TouchableOpacity>
           ))}
         </View>
@@ -129,41 +140,49 @@ const Page = () => {
           }}
         >
           <TouchableOpacity onPress={onBiometricAuthPress}>
-            <MaterialCommunityIcons
-              name="face-recognition"
-              size={26}
-              color="black"
-            />
+            <View style={{ padding: 15 }}>
+              <MaterialCommunityIcons
+                name="face-recognition"
+                size={26}
+                color="black"
+              />
+            </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => onNumberPress(0)}>
-            <Text style={styles.number}>0</Text>
+            <View style={{ padding: 20 }}>
+              <Text style={styles.number}>0</Text>
+            </View>
           </TouchableOpacity>
 
           <View style={{ minWidth: 30 }}>
-            {code.length > 0 && (
+            {
               <TouchableOpacity onPress={numberBackspace}>
-                <Text style={styles.number}>
-                  <MaterialCommunityIcons
-                    name="backspace-outline"
-                    size={26}
-                    color="black"
-                  />
-                </Text>
+                <View style={{ padding: 15 }}>
+                  <Text style={styles.number}>
+                    <MaterialCommunityIcons
+                      name="backspace-outline"
+                      size={26}
+                      color="black"
+                    />
+                  </Text>
+                </View>
               </TouchableOpacity>
-            )}
+            }
           </View>
         </View>
-        <Text
-          style={{
-            alignSelf: "center",
-            color: Colors.primary,
-            fontWeight: "500",
-            fontSize: 18,
-          }}
-        >
-          Forgot your passcode?
-        </Text>
+        <TouchableOpacity onPress={onForgotPasscodePress}>
+          <Text
+            style={{
+              alignSelf: "center",
+              color: Colors.primary,
+              fontWeight: "500",
+              fontSize: 18,
+            }}
+          >
+            Forgot your passcode?
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -181,7 +200,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 20,
-    marginVertical: 100,
+    marginVertical: 90,
   },
   codeEmpty: {
     width: 20,
@@ -189,8 +208,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   numbersView: {
-    marginHorizontal: 80,
-    gap: 60,
+    marginHorizontal: 60,
+    gap: 15,
   },
   number: {
     fontSize: 32,
