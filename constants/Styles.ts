@@ -13,7 +13,7 @@ export const defaultStyles = StyleSheet.create({
   },
   pillButton: {
     padding: 10,
-    height: 60,
+    height: 55,
     borderRadius: 40,
     justifyContent: "center",
     alignItems: "center",

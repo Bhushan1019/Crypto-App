@@ -27,7 +27,7 @@ const Page = () => {
   const router = useRouter();
   const { signIn } = useSignIn();
 
-  const onSignin = async (type: SignInType) => {
+  const onSignIn = async (type: SignInType) => {
     if (type === SignInType.Phone) {
       try {
         const fullPhoneNumber = `${countryCode}${phoneNumber}`;
@@ -35,11 +35,12 @@ const Page = () => {
         const { supportedFirstFactors } = await signIn!.create({
           identifier: fullPhoneNumber,
         });
-        const firstPhoneFactor: any = supportedFirstFactors?.find(
+        const firstPhoneFactor: any = supportedFirstFactors.find(
           (factor: any) => {
             return factor.strategy === "phone_code";
           }
         );
+
         const { phoneNumberId } = firstPhoneFactor;
 
         await signIn!.prepareFirstFactor({
@@ -49,13 +50,13 @@ const Page = () => {
 
         router.push({
           pathname: "/verify/[phone]",
-          params: { phone: fullPhoneNumber, signIn: "true" },
+          params: { phone: fullPhoneNumber, signin: "true" },
         });
-      } catch (error) {
-        console.log("error", JSON.stringify(error, null, 2));
-        if (isClerkAPIResponseError(error)) {
-          if (error.errors[0].code === "form_identifier_not_found") {
-            Alert.alert("Error", error.errors[0].message);
+      } catch (err) {
+        console.log("error", JSON.stringify(err, null, 2));
+        if (isClerkAPIResponseError(err)) {
+          if (err.errors[0].code === "form_identifier_not_found") {
+            Alert.alert("Error", err.errors[0].message);
           }
         }
       }
@@ -77,8 +78,8 @@ const Page = () => {
           <TextInput
             style={styles.input}
             //   style={[styles.input, { flex: 1 }]}
-            placeholder="Country code"
-            placeholderTextColor={Colors.gray}
+            // placeholder="Country code"
+            // placeholderTextColor={Colors.gray}
             value={countryCode}
           />
           <TextInput
@@ -97,7 +98,7 @@ const Page = () => {
             phoneNumber !== "" ? styles.enabled : styles.disable,
             { marginTop: 20 },
           ]}
-          onPress={() => onSignin(SignInType.Phone)}
+          onPress={() => onSignIn(SignInType.Phone)}
         >
           <Text style={defaultStyles.buttonText}>Continue</Text>
         </TouchableOpacity>
@@ -133,7 +134,7 @@ const Page = () => {
           ></View>
         </View>
         <TouchableOpacity
-          onPress={() => onSignin(SignInType.Email)}
+          onPress={() => onSignIn(SignInType.Email)}
           style={[
             defaultStyles.pillButton,
             {
@@ -150,7 +151,7 @@ const Page = () => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => onSignin(SignInType.Google)}
+          onPress={() => onSignIn(SignInType.Google)}
           style={[
             defaultStyles.pillButton,
             {
@@ -167,7 +168,7 @@ const Page = () => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => onSignin(SignInType.Apple)}
+          onPress={() => onSignIn(SignInType.Apple)}
           style={[
             defaultStyles.pillButton,
             {
@@ -189,14 +190,14 @@ const Page = () => {
 };
 const styles = StyleSheet.create({
   inputContainer: {
-    marginVertical: 40,
+    marginVertical: 36,
     flexDirection: "row",
   },
   input: {
     backgroundColor: Colors.lightGray,
-    padding: 20,
+    padding: 15,
     borderRadius: 16,
-    // fontSize: 14,
+    fontSize: 20,
     marginRight: 10,
   },
   enabled: {

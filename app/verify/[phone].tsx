@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, useLocalSearchParams } from "expo-router";
 import {
@@ -22,8 +29,8 @@ const Page = () => {
     phone: string;
     signin: string;
   }>();
-
   const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
   const { signIn } = useSignIn();
   const { signUp, setActive } = useSignUp();
 
@@ -35,6 +42,7 @@ const Page = () => {
 
   useEffect(() => {
     if (code.length === 6) {
+      setLoading(true);
       if (signin === "true") {
         verifySignIn();
       } else {
@@ -49,15 +57,16 @@ const Page = () => {
         code,
       });
       await setActive!({ session: signUp!.createdSessionId });
-    } catch (error) {
-      console.log("error", JSON.stringify(error, null, 2));
-      if (isClerkAPIResponseError(error)) {
-        if (error.errors[0].code === "form_identifier_not_found") {
-          Alert.alert("Error", error.errors[0].message);
-        }
+    } catch (err) {
+      console.log("error", JSON.stringify(err, null, 2));
+      if (isClerkAPIResponseError(err)) {
+        Alert.alert("Error", err.errors[0].message);
       }
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
+
   const verifySignIn = async () => {
     try {
       await signIn!.attemptFirstFactor({
@@ -65,80 +74,83 @@ const Page = () => {
         code,
       });
       await setActive!({ session: signIn!.createdSessionId });
-    } catch (error) {
-      console.log("error", JSON.stringify(error, null, 2));
-      if (isClerkAPIResponseError(error)) {
-        if (error.errors[0].code === "form_identifier_not_found") {
-          Alert.alert("Error", error.errors[0].message);
-        }
+    } catch (err) {
+      console.log("error", JSON.stringify(err, null, 2));
+      if (isClerkAPIResponseError(err)) {
+        Alert.alert("Error", err.errors[0].message);
       }
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
   return (
     <View style={defaultStyles.container}>
-      <Text style={defaultStyles.header}>6-digit code</Text>
+      <Text style={defaultStyles.header}>Verification</Text>
       <Text style={defaultStyles.descriptionText}>
-        Code sent to {phone} unless you already have an account
+        6-digit code has been sent to {phone}
       </Text>
-
-      <CodeField
-        ref={ref}
-        {...props}
-        // Use `caretHidden={false}` when users can't paste a text value, because context menu doesn't appear
-        value={code}
-        onChangeText={setCode}
-        cellCount={CELL_COUNT}
-        rootStyle={styles.codeFieldRoot}
-        keyboardType="number-pad"
-        textContentType="oneTimeCode"
-        // autoComplete={Platform.select({
-        //   android: "sms-otp",
-        //   default: "one-time-code",
-        // })}
-        testID="my-code-input"
-        renderCell={({ index, symbol, isFocused }) => (
-          <Fragment key={index}>
-            <Text
-              key={index}
-              style={[styles.cell, isFocused && styles.focusCell]}
-              onLayout={getCellOnLayoutHandler(index)}
-            >
-              {symbol || (isFocused ? <Cursor /> : null)}
-            </Text>
-            {index === 2 ? (
-              <View key={`separator-${index}`} style={styles.separator} />
-            ) : null}
-          </Fragment>
-        )}
-      />
-
-      <Link href={"/login"} replace asChild>
-        <TouchableOpacity>
-          <Text style={[defaultStyles.textLink]}>
-            Already have an account? Log in
-          </Text>
-        </TouchableOpacity>
-      </Link>
+      {loading ? (
+        <ActivityIndicator
+          style={{ marginTop: 30 }}
+          size="large"
+          color={Colors.primary}
+        />
+      ) : (
+        <CodeField
+          ref={ref}
+          {...props}
+          value={code}
+          onChangeText={setCode}
+          cellCount={CELL_COUNT}
+          rootStyle={styles.codeFieldRoot}
+          keyboardType="number-pad"
+          textContentType="oneTimeCode"
+          renderCell={({ index, symbol, isFocused }) => (
+            <Fragment key={index}>
+              <View
+                // Make sure that you pass onLayout={getCellOnLayoutHandler(index)} prop to root component of "Cell"
+                onLayout={getCellOnLayoutHandler(index)}
+                key={index}
+                style={[styles.cellRoot, isFocused && styles.focusCell]}
+              >
+                <Text style={styles.cellText}>
+                  {symbol || (isFocused ? <Cursor /> : null)}
+                </Text>
+              </View>
+              {index === 2 ? (
+                <View key={`separator-${index}`} style={styles.separator} />
+              ) : null}
+            </Fragment>
+          )}
+        />
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: { flex: 1, padding: 20 },
-  title: { textAlign: "center", fontSize: 30 },
-  codeFieldRoot: { marginTop: 20 },
-  cell: {
+  codeFieldRoot: {
+    marginVertical: 20,
+    marginLeft: "auto",
+    marginRight: "auto",
+    gap: 12,
+  },
+  cellRoot: {
     width: 40,
-    height: 40,
-    lineHeight: 38,
-    fontSize: 24,
-    borderWidth: 2,
-    borderColor: "#00000030",
+    height: 55,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.lightGray,
+    borderRadius: 8,
+  },
+  cellText: {
+    color: "#000",
+    fontSize: 30,
     textAlign: "center",
   },
   focusCell: {
-    borderColor: "#000",
+    paddingBottom: 10,
   },
   separator: {
     height: 2,

@@ -50,8 +50,8 @@ const Page = () => {
           <TextInput
             style={styles.input}
             //   style={[styles.input, { flex: 1 }]}
-            placeholder="Country code"
-            placeholderTextColor={Colors.gray}
+            // placeholder="Country code"
+            // placeholderTextColor={Colors.gray}
             value={countryCode}
           />
           <TextInput
@@ -92,14 +92,14 @@ const Page = () => {
 };
 const styles = StyleSheet.create({
   inputContainer: {
-    marginVertical: 40,
+    marginVertical: 36,
     flexDirection: "row",
   },
   input: {
     backgroundColor: Colors.lightGray,
-    padding: 20,
+    padding: 15,
     borderRadius: 16,
-    // fontSize: 14,
+    fontSize: 20,
     marginRight: 10,
   },
   enabled: {
