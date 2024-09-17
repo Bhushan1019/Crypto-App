@@ -121,7 +121,11 @@ const InitialLayout = () => {
       />
       <Stack.Screen
         name="help"
-        options={{ title: "Help", presentation: "modal" }}
+        options={{
+          title: "Help",
+          presentation: "modal",
+          headerShadowVisible: false,
+        }}
       />
 
       <Stack.Screen
