@@ -41,24 +41,6 @@
         {
           "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
         }
-      ],
-      [
-        "expo-dynamic-app-icon",
-        {
-          "default": {
-            // icon name
-            "image": "./assets/images/icon.png", // icon path
-            "prerendered": true // for ios UIPrerenderedIcon option
-          },
-          "dark": {
-            "image": "./assets/images/icon-dark.png",
-            "prerendered": true
-          },
-          "vivid": {
-            "image": "./assets/images/icon-vivid.png",
-            "prerendered": true
-          }
-        }
       ]
     ],
     "experiments": {
