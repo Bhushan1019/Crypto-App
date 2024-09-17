@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Image,
 } from "react-native";
 import React from "react";
 import { BlurView } from "expo-blur";
@@ -11,9 +12,12 @@ import Colors from "@/constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
 
 const CustomHeader = () => {
   const { top } = useSafeAreaInsets();
+  const { user } = useUser();
+
   return (
     <BlurView intensity={80} tint="extraLight" style={{ paddingTop: top }}>
       <View
@@ -36,11 +40,20 @@ const CustomHeader = () => {
               backgroundColor: Colors.gray,
               justifyContent: "center",
               alignItems: "center",
+              overflow: "hidden",
             }}
           >
-            <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16 }}>
-              SG
-            </Text>
+            {user?.profileImageUrl ? (
+              <Image
+                source={{ uri: user.profileImageUrl }}
+                style={{ width: 40, height: 40 }}
+                resizeMode="cover" // Make sure the image covers the container
+              />
+            ) : (
+              <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16 }}>
+                NA
+              </Text> // Fallback if no image is available
+            )}
           </TouchableOpacity>
         </Link>
 
